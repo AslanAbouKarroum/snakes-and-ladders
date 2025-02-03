@@ -1,0 +1,76 @@
+body{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.container {
+  display: flex;
+  width: 75%;
+  height: 620px;
+  /* background-color: red; */
+  flex-wrap: wrap;
+  flex-direction: row;
+  flex-shrink: initial;
+  background-image: url("https://raw.githubusercontent.com/adrianeyre/codewars/master/Ruby/Authored/snakesandladdersboard.jpg");
+  background-size: cover
+}
+
+.insider{
+  color : black;
+  border: 20px;
+  border-color: black;
+  /* background-color: white; */
+  width: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#playerAndBtn{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  /* text-align: center; */
+  justify-content: space-between;
+}
+
+#below_div{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#new_game_div{
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+#play {
+  margin-top: 10px;
+  width: 100px;
+  height: 30px;
+}
+
+#checkbox_div{
+  margin-right: 182px;
+  display: flex;
+  justify-content: left;
+  flex-direction: column;
+}
+
+#span_btn{
+  display: flex;
+  flex-direction: column;
+  margin-right: 280px;
+}
+
+#turn {
+  text-align: center;
+}
+.insider img{
+  width: 25px;
+  height: 25px;
+}
+
+
