@@ -146,6 +146,9 @@ let img ={  // convert the number of the player place to the correspondent place
         let cells = document.querySelectorAll('.insider')
         for(let cell of cells){
             cell.style['background-color'] = null;
+            if(cell.hasChildNodes()){
+                cell.removeChild(cell.firstChild)
+            }
         }
         checkbox_div.style.visibility= 'visible';
         two_dice_div.style.visibility= 'visible';
@@ -166,12 +169,15 @@ let img ={  // convert the number of the player place to the correspondent place
         document.getElementById('screen2').textContent = die2
         if(turn==1){  // player 1 turn
             // let element = document.getElementById(this.img[this.player1place]) || null;  // convert to right place on the image, and null because at first the place is 0 and that throw and error
-            let element = document.getElementById(`img${img[player1place]}`) || null;
-            if(player2place!=player1place){   
-                if(element) element.src = ''  // to turn the background off before leaving the palce
-            }else{
-                if(element) element.src = 'https://webstockreview.net/images/circle-clipart-colored-6.png'; // to turn the background by the opposit color before leaving (that was a glitch caused by the comming to the occupied place abd leaving it on the next turn before the opposit play(2 dice equal case))
-            }
+            let element = document.getElementById(`${img[player1place]}`) || null;
+            let img_in_element = document.getElementById(`img${img[player1place]}`) || null; 
+            //if(player2place!=player1place){    
+                if(img_in_element){
+                    element.removeChild(img_in_element); // to remove the img before leaving the palce
+                }  
+            //}else{
+            //  if(img_in_element) img_in_element.src = 'https://webstockreview.net/images/circle-clipart-colored-6.png'; // to display the img by the opposit color before leaving (that was a glitch caused by the comming to the occupied place abd leaving it on the next turn before the opposit play(2 dice equal case))
+            //}
             if(die1!==die2){turn=2};     // to switch the turn if dice aren't the same and to not switching it if the dice has the same number
             player1place = player1place+die1+die2;   // changing the player place to the next one
             if(player1place==100){  // checking if the current player won  
@@ -183,21 +189,27 @@ let img ={  // convert the number of the player place to the correspondent place
                 if(board[player1place]) player1place = board[player1place]  // checking if the player lay on a snake head or a bottom of a ladders
                 console.log( 'Player 1 is on square '+player1place);
             };
-            let images = document.querySelectorAll('.insider')//.childNodes[1]
+            // let images = document.querySelectorAll('.insider')//.childNodes[1]
             // for(let image of images){
             //     console.log('image '+image.childNodes[1])
             //     //image.childNodes[1].src= '';
             // }
-            element = document.getElementById(`img${img[player1place]}`) || null;
-            if(element)element.src = 'https://webstockreview.net/images/circle-clipart-colored-13.png'       // coloring the newly occupied place
+            element = document.getElementById(`${img[player1place]}`) || null;
+            img_in_element = document.createElement("img");   // creating the img element
+            img_in_element.id = `img${img[player1place]}`;    // assigning id to it
+            img_in_element.src = 'https://webstockreview.net/images/circle-clipart-colored-13.png'   // displaying the img on the newly occupied place
+            element.appendChild(img_in_element);  // appending the img to the parent div
             //element.style['margin-top'] = '-40px';
         }else if(turn==2){   // player 2 turn 
-            let element2 = document.getElementById(`img${img[player2place]}`) || null;  
-            if(player2place!=player1place){
-                if(element2) element2.src = ''
-            }else{
-                if(element2) element2.src = 'https://webstockreview.net/images/circle-clipart-colored-13.png';
-            }
+            let element2 = document.getElementById(`${img[player2place]}`) || null;  
+            let img_in_element2 = document.getElementById(`img${img[player2place]}`) || null;
+            //if(player2place!=player1place){
+                if(img_in_element2){
+                    element2.removeChild(img_in_element2); // to remove the img before leaving the palce
+                }  
+            //}else{
+            //    if(img_in_element2) img_in_element2.src = 'https://webstockreview.net/images/circle-clipart-colored-13.png'; // to display the img by the opposit color before leaving (that was a glitch caused by the comming to the occupied place abd leaving it on the next turn before the opposit play(2 dice equal case))
+            //}
             if(die1!==die2){turn=1};
             player2place = player2place+die1+die2;
             if(player2place==100){
@@ -209,8 +221,11 @@ let img ={  // convert the number of the player place to the correspondent place
                 if(board[player2place]) player2place = board[player2place]
                 console.log('Player 2 is on square '+ player2place);
             };
-            element2 = document.getElementById(`img${img[player2place]}`) || null;
-            if(element2) element2.src = 'https://webstockreview.net/images/circle-clipart-colored-6.png';
+            element2 = document.getElementById(`${img[player2place]}`) || null;
+            img_in_element2 = document.createElement("img");   // creating the img element
+            img_in_element2.id = `img${img[player2place]}`;    // assigning id to it
+            img_in_element2.src = 'https://webstockreview.net/images/circle-clipart-colored-6.png';
+            element2.appendChild(img_in_element2);  // appending the img to the parent div
         };
         document.getElementById("turn").textContent= `Player ${turn}`;   // changing the player 2 above the play button on the user interface
     };
