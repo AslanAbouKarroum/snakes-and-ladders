@@ -10,6 +10,8 @@ let check=0;                // 0 to continue the game, 3 if player one win, 4 if
 let hard_bot_arr=[6,6,2,1,1,1]  // array for the hard mode that store the number of dice for the next 3 moves
 let hard_bot_index =0;          // index has 2 task first to get the right number on the dice and the second task is to let the bot choose randomly when the index is greater than the length of the array
 let newGame_check = 0;          // if the user press new game when timeout function is occuring then the game will start itself because the timeout function will call the method
+let red_circle = 'https://webstockreview.net/images/circle-clipart-colored-13.png';
+let blue_circle = 'https://webstockreview.net/images/circle-clipart-colored-6.png';
 let board = {   // convert the number from bottom of the ladder to the top and from the head of the snakes to the tail
     2:38,
     7:14,
@@ -136,399 +138,401 @@ let img ={  // convert the number of the player place to the correspondent place
     100:1
 };
 
-    function newGame(){
-        newGame_check =1;  // so the timeout function don't call any method if the new game button is pressed
-        turn = 1;
-        player1place = 0;
-        player2place = 0;
-        check =0;
-        hard_bot_index =0;
-        let cells = document.querySelectorAll('.insider')
-        for(let cell of cells){
-            cell.style['background-color'] = null;
-            if(cell.hasChildNodes()){
-                cell.removeChild(cell.firstChild)
-            }
+function newGame(){
+    newGame_check =1;  // so the timeout function don't call any method if the new game button is pressed
+    turn = 1;
+    player1place = 0;
+    player2place = 0;
+    check =0;
+    hard_bot_index =0;
+    let cells = document.querySelectorAll('.insider')
+    for(let cell of cells){
+        cell.style['background-color'] = null;
+        if(cell.hasChildNodes()){
+            cell.removeChild(cell.firstChild)
+            if(cell.hasChildNodes())cell.removeChild(cell.firstChild)
         }
-        checkbox_div.style.visibility= 'visible';
-        two_dice_div.style.visibility= 'visible';
-        two_players_div.style.visibility= 'visible';
-        document.getElementById('play').removeAttribute('disabled');
-        document.getElementById('screen1').textContent = '';
-        document.getElementById('screen2').textContent = '';
-        document.getElementById("turn").textContent= 'Player 1'
-    };
+    }
+    checkbox_div.style.visibility= 'visible';
+    two_dice_div.style.visibility= 'visible';
+    two_players_div.style.visibility= 'visible';
+    document.getElementById('play').removeAttribute('disabled');
+    document.getElementById('screen1').textContent = '';
+    document.getElementById('screen2').textContent = '';
+    document.getElementById("turn").textContent= 'Player 1'
+};
 
-    function play(){  // called when playing with 2 dice and 2 players
-        if(check==3){ console.log( 'Player 1 Wins!');return 0}; // check if player 1 won
-        if(check==4){ console.log( 'Player 2 Wins!');return 0}; // check if player 2 won
-        let die1 = Math.ceil(Math.random()*6)  // random number for the dice between 1 and 6
-        let die2 = Math.ceil(Math.random()*6)
-        console.log(die1 + ' '+die2)
-        document.getElementById('screen1').textContent = die1   // show the dice number to the user
-        document.getElementById('screen2').textContent = die2
-        if(turn==1){  // player 1 turn
-            // let element = document.getElementById(this.img[this.player1place]) || null;  // convert to right place on the image, and null because at first the place is 0 and that throw and error
-            let element = document.getElementById(`${img[player1place]}`) || null;
-            let img_in_element = document.getElementById(`img${img[player1place]}`) || null; 
-            //if(player2place!=player1place){    
-                if(img_in_element){
-                    element.removeChild(img_in_element); // to remove the img before leaving the palce
-                }  
-            //}else{
-            //  if(img_in_element) img_in_element.src = 'https://webstockreview.net/images/circle-clipart-colored-6.png'; // to display the img by the opposit color before leaving (that was a glitch caused by the comming to the occupied place abd leaving it on the next turn before the opposit play(2 dice equal case))
-            //}
-            if(die1!==die2){turn=2};     // to switch the turn if dice aren't the same and to not switching it if the dice has the same number
-            player1place = player1place+die1+die2;   // changing the player place to the next one
-            if(player1place==100){  // checking if the current player won  
-                turn=2;             // chanching the turn in case the dice are the same
-                check =3;           // changing the check 
-                console.log( 'Player 1 Wins!');
-            }else{           // normal cases
-                if(player1place>100) player1place = 100 -(player1place%100)  // bounce back above 100
-                if(board[player1place]) player1place = board[player1place]  // checking if the player lay on a snake head or a bottom of a ladders
-                console.log( 'Player 1 is on square '+player1place);
-            };
-            // let images = document.querySelectorAll('.insider')//.childNodes[1]
-            // for(let image of images){
-            //     console.log('image '+image.childNodes[1])
-            //     //image.childNodes[1].src= '';
-            // }
-            element = document.getElementById(`${img[player1place]}`) || null;
-            img_in_element = document.createElement("img");   // creating the img element
-            img_in_element.id = `img${img[player1place]}`;    // assigning id to it
-            img_in_element.src = 'https://webstockreview.net/images/circle-clipart-colored-13.png'   // displaying the img on the newly occupied place
-            element.appendChild(img_in_element);  // appending the img to the parent div
-            //element.style['margin-top'] = '-40px';
-        }else if(turn==2){   // player 2 turn 
-            let element2 = document.getElementById(`${img[player2place]}`) || null;  
-            let img_in_element2 = document.getElementById(`img${img[player2place]}`) || null;
-            //if(player2place!=player1place){
-                if(img_in_element2){
-                    element2.removeChild(img_in_element2); // to remove the img before leaving the palce
-                }  
-            //}else{
-            //    if(img_in_element2) img_in_element2.src = 'https://webstockreview.net/images/circle-clipart-colored-13.png'; // to display the img by the opposit color before leaving (that was a glitch caused by the comming to the occupied place abd leaving it on the next turn before the opposit play(2 dice equal case))
-            //}
-            if(die1!==die2){turn=1};
-            player2place = player2place+die1+die2;
-            if(player2place==100){
-                turn=1;
-                check =4;
-                console.log('Player 2 Wins!');
-            }else{
-                if(player2place>100) player2place = 100 -(player2place%100) 
-                if(board[player2place]) player2place = board[player2place]
-                console.log('Player 2 is on square '+ player2place);
-            };
-            element2 = document.getElementById(`${img[player2place]}`) || null;
-            img_in_element2 = document.createElement("img");   // creating the img element
-            img_in_element2.id = `img${img[player2place]}`;    // assigning id to it
-            img_in_element2.src = 'https://webstockreview.net/images/circle-clipart-colored-6.png';
-            element2.appendChild(img_in_element2);  // appending the img to the parent div
-        };
-        document.getElementById("turn").textContent= `Player ${turn}`;   // changing the player 2 above the play button on the user interface
-    };
-
-    function bot(){   // called when playing one player and two dice
-        if(check==3){ console.log( 'Player 1 Wins!');return 0};
-        if(check==4){ console.log( 'Player 2 Wins!');return 0};
-        let die1 = Math.ceil(Math.random()*6)
-        let die2 = Math.ceil(Math.random()*6)
-        console.log(die1 + ' '+die2)
-        document.getElementById('screen1').textContent = die1
-        document.getElementById('screen2').textContent = die2
-        if(turn==1){
-            let element = document.getElementById(img[player1place]) || null;
-            if(player2place!=player1place){
-                if(element) element.style['background-color'] = null;
-            }else{
-                if(element) element.style['background-color'] = 'blue';
-            }
-            if(die1!==die2){turn=2};
-            player1place = player1place+die1+die2;
-            if(player1place==100){
-                turn=2;
-                check =3;
-                console.log( 'Player 1 Wins!');
-            }else{
-                if(player1place>100) player1place = 100 -(player1place%100) 
-                if(board[player1place]) player1place = board[player1place]
-                console.log( 'Player 1 is on square '+player1place);
-            };
-            element = document.getElementById(img[player1place]) || null;
-            if(element)element.style['background-color'] = 'red';
-        }else if(turn==2){
-            let element2 = document.getElementById(img[player2place]) || null;
-            if(player2place!=player1place){
-                if(element2) element2.style['background-color'] = null;
-            }else{
-                if(element2) element2.style['background-color'] = 'red';
-            }
-            if(die1!==die2){turn=1};
-            player2place = player2place+die1+die2;
-            if(player2place==100){
-                turn=1;
-                check =4;
-                console.log('Bot Wins!');
-            }else{
-                if(player2place>100) player2place = 100 -(player2place%100) 
-                if(board[player2place]) player2place =board[player2place]
-                console.log('Bot is on square '+ player2place);
-            };
-            element2 = document.getElementById(img[player2place]) || null;
-            if(element2) element2.style['background-color'] = 'blue';
-        };
-        if(turn==2){
-            document.getElementById("turn").textContent= 'Bot'  
-        }else{
-            document.getElementById("turn").textContent= `Player ${turn}`;
+function play(){  // called when playing with 2 dice and 2 players
+    if(check==3){ console.log( 'Player 1 Wins!');return 0}; // check if player 1 won
+    if(check==4){ console.log( 'Player 2 Wins!');return 0}; // check if player 2 won
+    let die1 = Math.ceil(Math.random()*6)  // random number for the dice between 1 and 6
+    let die2 = Math.ceil(Math.random()*6)
+    console.log(die1 + ' '+die2)
+    document.getElementById('screen1').textContent = die1   // show the dice number to the user
+    document.getElementById('screen2').textContent = die2
+    if(turn==1){  // player 1 turn
+        let element = document.getElementById(`${img[player1place]}`) || null;
+        let img_in_element = document.getElementById(`img${img[player1place]}`) || null;    
+        if(img_in_element){
+            element.removeChild(img_in_element); // to remove the img before leaving the palce
         }
-        if(turn==2) {
-            setTimeout(timeout_function, 2000);   // a 2 second wait so the bot doesn't play directly after the human player it's annoying beleive me
+        if(die1!==die2){turn=2};     // to switch the turn if dice aren't the same and to not switching it if the dice has the same number
+        player1place = player1place+die1+die2;   // changing the player place to the next one
+        if(player1place==100){  // checking if the current player won  
+            turn=2;             // chanching the turn in case the dice are the same
+            check =3;           // changing the check 
+            console.log( 'Player 1 Wins!');
+        }else{           // normal cases
+            if(player1place>100) player1place = 100 -(player1place%100)  // bounce back above 100
+            if(board[player1place]) player1place = board[player1place]  // checking if the player lay on a snake head or a bottom of a ladders
+            console.log( 'Player 1 is on square '+player1place);
         };
-        if(turn==2) document.querySelector('#play').setAttribute('disabled',true)  // to not let the user press the button during the bot turn
-        if(turn==1) document.querySelector('#play').removeAttribute('disabled')  // allowing the user to play after the bot finish its turn
-    };
-
-    function playOne(){      // called when playing two players and one dice
-        if(check==3){ console.log( 'Player 1 Wins!');return 0};
-        if(check==4){ console.log( 'Player 2 Wins!');return 0};
-        let die1 = Math.ceil(Math.random()*6)
-        console.log(die1)
-        document.getElementById('screen1').textContent = die1
-        if(turn==1){
-            let element = document.getElementById(img[player1place]) || null;
-            if(player2place!=player1place){
-                if(element) element.style['background-color'] = null;
-            }else{
-                if(element) element.style['background-color'] = 'blue';  // i can remove this else statement because there's one dice and the player can't have a second turn without the opposit play(no 2 dice equal case)
-            }
-            turn=2;
-            player1place = player1place+die1;
-            if(player1place==100){
-                turn=2;
-                check =3;
-                console.log( 'Player 1 Wins!');
-            }else{
-                if(player1place>100) player1place = 100 -(player1place%100) 
-                if(board[player1place])player1place = board[player1place]
-                console.log( 'Player 1 is on square '+player1place);
-            };
-            element = document.getElementById(img[player1place]) || null;
-            if(element)element.style['background-color'] = 'red';
-        }else if(turn==2){
-            let element2 = document.getElementById(img[player2place]) || null;
-            if(player2place!=player1place){
-                if(element2) element2.style['background-color'] = null;
-            }else{
-                if(element2) element2.style['background-color'] = 'red';      // i can remove this else statement because there's one dice and the player can't have a second turn without the opposit play(no 2 dice equal case)
-            }
+        element = document.getElementById(`${img[player1place]}`) || null;
+        img_in_element = document.createElement("img");   // creating the img element
+        img_in_element.id = `img${img[player1place]}`;    // assigning id to it
+        img_in_element.src = red_circle;   // displaying the img on the newly occupied place
+        element.appendChild(img_in_element);  // appending the img to the parent div
+    }else if(turn==2){   // player 2 turn 
+        let element2 = document.getElementById(`${img[player2place]}`) || null;  
+        let img_in_element2 = document.getElementById(`img${img[player2place]}`) || null;
+        if(img_in_element2){
+            element2.removeChild(img_in_element2); // to remove the img before leaving the palce
+        }
+        if(die1!==die2){turn=1};
+        player2place = player2place+die1+die2;
+        if(player2place==100){
             turn=1;
-            player2place =player2place+die1;
-            if(player2place==100){
-                turn=1;
-                check =4;
-                console.log('Player 2 Wins!');
-            }else{
-                if(player2place>100)player2place = 100 -(player2place%100) 
-                if(board[player2place]) player2place = board[player2place]
-                console.log('Player 2 is on square '+ player2place);
-            };
-            element2 = document.getElementById(img[player2place]) || null;
-            if(element2) element2.style['background-color'] = 'blue';
+            check =4;
+            console.log('Player 2 Wins!');
+        }else{
+            if(player2place>100) player2place = 100 -(player2place%100) 
+            if(board[player2place]) player2place = board[player2place]
+            console.log('Player 2 is on square '+ player2place);
         };
+        element2 = document.getElementById(`${img[player2place]}`) || null;
+        img_in_element2 = document.createElement("img");   // creating the img element
+        img_in_element2.id = `img${img[player2place]}`;    // assigning id to it
+        img_in_element2.src = blue_circle;
+        element2.appendChild(img_in_element2);  // appending the img to the parent div
+    };
+    document.getElementById("turn").textContent= `Player ${turn}`;   // changing the player 2 above the play button on the user interface
+};
+
+function bot(){   // called when playing one player and two dice
+    if(check==3){ console.log( 'Player 1 Wins!');return 0};
+    if(check==4){ console.log( 'Player 2 Wins!');return 0};
+    let die1 = Math.ceil(Math.random()*6)
+    let die2 = Math.ceil(Math.random()*6)
+    console.log(die1 + ' '+die2)
+    document.getElementById('screen1').textContent = die1
+    document.getElementById('screen2').textContent = die2
+    if(turn==1){
+        let element = document.getElementById(`${img[player1place]}`) || null;
+        let img_in_element = document.getElementById(`img${img[player1place]}`) || null;    
+        if(img_in_element){
+            element.removeChild(img_in_element); // to remove the img before leaving the palce
+        }
+        if(die1!==die2){turn=2};
+        player1place = player1place+die1+die2;
+        if(player1place==100){
+            turn=2;
+            check =3;
+            console.log( 'Player 1 Wins!');
+        }else{
+            if(player1place>100) player1place = 100 -(player1place%100) 
+            if(board[player1place]) player1place = board[player1place]
+            console.log( 'Player 1 is on square '+player1place);
+        };
+        element = document.getElementById(`${img[player1place]}`) || null;
+        img_in_element = document.createElement("img");   // creating the img element
+        img_in_element.id = `img${img[player1place]}`;    // assigning id to it
+        img_in_element.src = red_circle;   // displaying the img on the newly occupied place
+        element.appendChild(img_in_element);  // appending the img to the parent div
+    }else if(turn==2){
+        let element2 = document.getElementById(`${img[player2place]}`) || null;  
+        let img_in_element2 = document.getElementById(`img${img[player2place]}`) || null;
+        if(img_in_element2){
+            element2.removeChild(img_in_element2); // to remove the img before leaving the palce
+        }
+        if(die1!==die2){turn=1};
+        player2place = player2place+die1+die2;
+        if(player2place==100){
+            turn=1;
+            check =4;
+            console.log('Bot Wins!');
+        }else{
+            if(player2place>100) player2place = 100 -(player2place%100) 
+            if(board[player2place]) player2place =board[player2place]
+            console.log('Bot is on square '+ player2place);
+        };
+        element2 = document.getElementById(`${img[player2place]}`) || null;
+        img_in_element2 = document.createElement("img");   // creating the img element
+        img_in_element2.id = `img${img[player2place]}`;    // assigning id to it
+        img_in_element2.src = blue_circle;
+        element2.appendChild(img_in_element2);  // appending the img to the parent div
+    };
+    if(turn==2){
+        document.getElementById("turn").textContent= 'Bot'  
+    }else{
         document.getElementById("turn").textContent= `Player ${turn}`;
+    }
+    if(turn==2) {
+        setTimeout(timeout_function, 2000);   // a 2 second wait so the bot doesn't play directly after the human player it's annoying beleive me
     };
+    if(turn==2) document.querySelector('#play').setAttribute('disabled',true)  // to not let the user press the button during the bot turn
+    if(turn==1) document.querySelector('#play').removeAttribute('disabled')  // allowing the user to play after the bot finish its turn
+};
 
-    function botOne(){   // called when playing one player and one dice
-        if(check==3){ console.log( 'Player 1 Wins!');return 0};
-        if(check==4){ console.log( 'Bot Wins!');return 0};
-        let die1 = Math.ceil(Math.random()*6)
-        console.log(die1)
-        document.getElementById('screen1').textContent = 'Dice '+die1
-        if(turn==1){
-            let element = document.getElementById(img[player1place]) || null;
-            if(player2place!=player1place){
-                if(element) element.style['background-color'] = null;              // i can remove this else statement because there's one dice and the player can't have a second turn without the opposit play(no 2 dice equal case)
-            }else{
-                if(element) element.style['background-color'] = 'blue';
-            }
+function playOne(){      // called when playing two players and one dice
+    if(check==3){ console.log( 'Player 1 Wins!');return 0};
+    if(check==4){ console.log( 'Player 2 Wins!');return 0};
+    let die1 = Math.ceil(Math.random()*6)
+    console.log(die1)
+    document.getElementById('screen1').textContent = die1
+    if(turn==1){
+        let element = document.getElementById(`${img[player1place]}`) || null;
+        let img_in_element = document.getElementById(`img${img[player1place]}`) || null;    
+        if(img_in_element){
+            element.removeChild(img_in_element); // to remove the img before leaving the palce
+        }
+        turn=2;
+        player1place = player1place+die1;
+        if(player1place==100){
             turn=2;
-            player1place =player1place+die1;
-            if(player1place==100){
-                turn=2;
-                check =3;
-                console.log( 'Player 1 Wins!');
-            }else{
-                if(player1place>100) player1place = 100 -(player1place%100) 
-                if(board[player1place]) player1place = board[player1place]
-                console.log( 'Player 1 is on square '+player1place);
-            };
-            element = document.getElementById(img[player1place]) || null;
-            if(element)element.style['background-color'] = 'red';
-        }else if(turn==2){
-            let element2 = document.getElementById(img[player2place]) || null;
-            if(player2place!=player1place){
-                if(element2) element2.style['background-color'] = null;               // i can remove this else statement because there's one dice and the player can't have a second turn without the opposit play(no 2 dice equal case)
-            }else{
-                if(element2) element2.style['background-color'] = 'red';
-            }
+            check =3;
+            console.log( 'Player 1 Wins!');
+        }else{
+            if(player1place>100) player1place = 100 -(player1place%100) 
+            if(board[player1place])player1place = board[player1place]
+            console.log( 'Player 1 is on square '+player1place);
+        };
+        element = document.getElementById(`${img[player1place]}`) || null;
+        img_in_element = document.createElement("img");   // creating the img element
+        img_in_element.id = `img${img[player1place]}`;    // assigning id to it
+        img_in_element.src = red_circle;   // displaying the img on the newly occupied place
+        element.appendChild(img_in_element);  // appending the img to the parent div
+    }else if(turn==2){
+        let element2 = document.getElementById(`${img[player2place]}`) || null;  
+        let img_in_element2 = document.getElementById(`img${img[player2place]}`) || null;
+        if(img_in_element2){
+            element2.removeChild(img_in_element2); // to remove the img before leaving the palce
+        }
+        turn=1;
+        player2place =player2place+die1;
+        if(player2place==100){
             turn=1;
-            player2place = player2place+die1;
-            if(player2place==100){
-                turn=1;
-                check =4;
-                console.log('Bot Wins!');
-            }else{
-                if(player2place>100) player2place = 100 -(player2place%100) 
-                if(board[player2place]) player2place = board[player2place]
-                console.log('Bot is on square '+ player2place);
-            };
-            element2 = document.getElementById(img[player2place]) || null;
-            if(element2) element2.style['background-color'] = 'blue';
-        };
-        if(turn==2){
-            document.getElementById("turn").textContent= 'Bot'  
+            check =4;
+            console.log('Player 2 Wins!');
         }else{
-            document.getElementById("turn").textContent= `Player ${turn}`;
+            if(player2place>100)player2place = 100 -(player2place%100) 
+            if(board[player2place]) player2place = board[player2place]
+            console.log('Player 2 is on square '+ player2place);
+        };
+        element2 = document.getElementById(`${img[player2place]}`) || null;
+        img_in_element2 = document.createElement("img");   // creating the img element
+        img_in_element2.id = `img${img[player2place]}`;    // assigning id to it
+        img_in_element2.src = blue_circle;
+        element2.appendChild(img_in_element2);  // appending the img to the parent div
+    };
+    document.getElementById("turn").textContent= `Player ${turn}`;
+};
+
+function botOne(){   // called when playing one player and one dice
+    if(check==3){ console.log( 'Player 1 Wins!');return 0};
+    if(check==4){ console.log( 'Bot Wins!');return 0};
+    let die1 = Math.ceil(Math.random()*6)
+    console.log(die1)
+    document.getElementById('screen1').textContent = 'Dice '+die1
+    if(turn==1){
+        let element = document.getElementById(`${img[player1place]}`) || null;
+        let img_in_element = document.getElementById(`img${img[player1place]}`) || null;    
+        if(img_in_element){
+            element.removeChild(img_in_element); // to remove the img before leaving the palce
         }
-        if(turn==2) {
-            setTimeout(timeout_function, 2000);
-        };
-        if(turn==2) document.querySelector('#play').setAttribute('disabled',true)
-        if(turn==1) document.querySelector('#play').removeAttribute('disabled')
-    };
-
-    function hard(){    // called when playing against hard opponent, here the bot will arrive to the cell 84 in 2 turns (3 moves) and have a move in hand (2 dice equal case)
-        if(check==3){ console.log( 'Player 1 Wins!');return 0};
-        if(check==4){ console.log( 'Bot Wins!');return 0};
-        if(turn==1){
-            let die1 = Math.ceil(Math.random()*6)
-            let die2 = Math.ceil(Math.random()*6)
-            console.log(die1 + ' '+die2)
-            document.getElementById('screen1').textContent = die1
-            document.getElementById('screen2').textContent = die2
-            let element = document.getElementById(img[player1place]) || null;
-            if(player2place!=player1place){
-                if(element) element.style['background-color'] = null;
-            }else{
-                if(element) element.style['background-color'] = 'blue';
-            }
-            if(die1!==die2){turn=2};
-            player1place = player1place+die1+die2;
-            if(player1place==100){
-                turn=2;
-                check =3;
-                console.log( 'Player 1 Wins!');
-            }else{
-                if(player1place>100) player1place = 100 -(player1place%100) 
-                if(board[player1place]) player1place = board[player1place]
-                console.log( 'Player 1 is on square '+player1place);
-            };
-            element = document.getElementById(img[player1place]) || null;
-            if(element)element.style['background-color'] = 'red';
-        }else if(turn==2){
-            let die1 = 0;
-            let die2 = 0;
-            if(hard_bot_index<hard_bot_arr.length){  // checking if the bot played all his designated moves or yet
-                die1 = hard_bot_arr[hard_bot_index];    // assigning the first dice to the coorespondent index in the array
-                die2 = hard_bot_arr[hard_bot_index+1];
-                hard_bot_index+=2;       // adding the index for the next move or turn
-            }else{                    // leaving the bot to his chance :(
-                die1 = Math.ceil(Math.random()*6)
-                die2 = Math.ceil(Math.random()*6)
-            }
-            console.log(die1 + ' '+die2)
-            document.getElementById('screen1').textContent = die1
-            document.getElementById('screen2').textContent = die2
-            let element2 = document.getElementById(img[player2place]) || null;
-            if(player2place!=player1place){
-                if(element2) element2.style['background-color'] = null;
-            }else{
-                if(element2) element2.style['background-color'] = 'red';
-            }
-            if(die1!==die2){turn=1};
-            player2place = player2place+die1+die2;
-            if(player2place==100){
-                turn=1;
-                check =4;
-                console.log('Bot Wins!');
-            }else{
-                if(player2place>100) player2place = 100 -(player2place%100) 
-                if(board[player2place]) player2place = board[player2place]
-                console.log('Bot is on square '+ player2place);
-            };
-            element2 = document.getElementById(img[player2place]) || null;
-            if(element2) element2.style['background-color'] = 'blue';
-        };
-        if(turn==2){
-            document.getElementById("turn").textContent= 'Bot'  
+        turn=2;
+        player1place =player1place+die1;
+        if(player1place==100){
+            turn=2;
+            check =3;
+            console.log( 'Player 1 Wins!');
         }else{
-            document.getElementById("turn").textContent= `Player ${turn}`;
+            if(player1place>100) player1place = 100 -(player1place%100) 
+            if(board[player1place]) player1place = board[player1place]
+            console.log( 'Player 1 is on square '+player1place);
+        };
+        element = document.getElementById(`${img[player1place]}`) || null;
+        img_in_element = document.createElement("img");   // creating the img element
+        img_in_element.id = `img${img[player1place]}`;    // assigning id to it
+        img_in_element.src = red_circle;   // displaying the img on the newly occupied place
+        element.appendChild(img_in_element);  // appending the img to the parent div
+    }else if(turn==2){
+        let element2 = document.getElementById(`${img[player2place]}`) || null;  
+        let img_in_element2 = document.getElementById(`img${img[player2place]}`) || null;
+        if(img_in_element2){
+            element2.removeChild(img_in_element2); // to remove the img before leaving the palce
         }
-        if(turn==2) {
-            setTimeout(timeout_function, 2000);
-        };
-        if(turn==2) document.querySelector('#play').setAttribute('disabled',true)
-        if(turn==1) document.querySelector('#play').removeAttribute('disabled')
-    };
-
-
-    function play_now(){       // called when the play button is clicked on
-        newGame_check = 0;   // to reset the check button to start playing normally
-        const checkbox_div = document.getElementById('checkbox_div');
-        const two_dice_div = document.getElementById('two_dice_div');
-        const two_players_div = document.getElementById('two_players_div');
-        checkbox_div.style.visibility= 'hidden';      // hide the options so the user doesn't toggle them after the starting of the game
-        two_dice_div.style.visibility= 'hidden';      // although their parent div has hidden visibility, but if the hard mode was checked and unchecked they will have a style of visibility visible and they will appear
-        two_players_div.style.visibility= 'hidden';
-        if(play_hard_checkbox.checked){          // specifing which method should be called
-            hard();
-        }else if(two_dice_checkbox.checked){
-            if (two_players_checkbox.checked){
-                play();
-            }else{
-                bot();
-            }
+        turn=1;
+        player2place = player2place+die1;
+        if(player2place==100){
+            turn=1;
+            check =4;
+            console.log('Bot Wins!');
         }else{
-            if (two_players_checkbox.checked){
-                playOne();
-            }else{
-                botOne();
-            }
+            if(player2place>100) player2place = 100 -(player2place%100) 
+            if(board[player2place]) player2place = board[player2place]
+            console.log('Bot is on square '+ player2place);
         };
+        element2 = document.getElementById(`${img[player2place]}`) || null;
+        img_in_element2 = document.createElement("img");   // creating the img element
+        img_in_element2.id = `img${img[player2place]}`;    // assigning id to it
+        img_in_element2.src = blue_circle;
+        element2.appendChild(img_in_element2);  // appending the img to the parent div
     };
+    if(turn==2){
+        document.getElementById("turn").textContent= 'Bot'  
+    }else{
+        document.getElementById("turn").textContent= `Player ${turn}`;
+    }
+    if(turn==2) {
+        setTimeout(timeout_function, 2000);
+    };
+    if(turn==2) document.querySelector('#play').setAttribute('disabled',true)
+    if(turn==1) document.querySelector('#play').removeAttribute('disabled')
+};
+
+function hard(){    // called when playing against hard opponent, here the bot will arrive to the cell 84 in 2 turns (3 moves) and have a move in hand (2 dice equal case)
+    if(check==3){ console.log( 'Player 1 Wins!');return 0};
+    if(check==4){ console.log( 'Bot Wins!');return 0};
+    if(turn==1){
+        let die1 = Math.ceil(Math.random()*6)
+        let die2 = Math.ceil(Math.random()*6)
+        console.log(die1 + ' '+die2)
+        document.getElementById('screen1').textContent = die1
+        document.getElementById('screen2').textContent = die2
+        let element = document.getElementById(`${img[player1place]}`) || null;
+        let img_in_element = document.getElementById(`img${img[player1place]}`) || null;    
+        if(img_in_element){
+            element.removeChild(img_in_element); // to remove the img before leaving the palce
+        }
+        if(die1!==die2){turn=2};
+        player1place = player1place+die1+die2;
+        if(player1place==100){
+            turn=2;
+            check =3;
+            console.log( 'Player 1 Wins!');
+        }else{
+            if(player1place>100) player1place = 100 -(player1place%100) 
+            if(board[player1place]) player1place = board[player1place]
+            console.log( 'Player 1 is on square '+player1place);
+        };
+        element = document.getElementById(`${img[player1place]}`) || null;
+        img_in_element = document.createElement("img");   // creating the img element
+        img_in_element.id = `img${img[player1place]}`;    // assigning id to it
+        img_in_element.src = red_circle;   // displaying the img on the newly occupied place
+        element.appendChild(img_in_element);  // appending the img to the parent div
+    }else if(turn==2){
+        let die1 = 0;
+        let die2 = 0;
+        if(hard_bot_index<hard_bot_arr.length){  // checking if the bot played all his designated moves or yet
+            die1 = hard_bot_arr[hard_bot_index];    // assigning the first dice to the coorespondent index in the array
+            die2 = hard_bot_arr[hard_bot_index+1];
+            hard_bot_index+=2;       // adding the index for the next move or turn
+        }else{                    // leaving the bot to his chance :(
+            die1 = Math.ceil(Math.random()*6)
+            die2 = Math.ceil(Math.random()*6)
+        }
+        console.log(die1 + ' '+die2)
+        document.getElementById('screen1').textContent = die1
+        document.getElementById('screen2').textContent = die2
+        let element2 = document.getElementById(`${img[player2place]}`) || null;  
+        let img_in_element2 = document.getElementById(`img${img[player2place]}`) || null;
+        if(img_in_element2){
+            element2.removeChild(img_in_element2); // to remove the img before leaving the palce
+        }
+        if(die1!==die2){turn=1};
+        player2place = player2place+die1+die2;
+        if(player2place==100){
+            turn=1;
+            check =4;
+            console.log('Bot Wins!');
+        }else{
+            if(player2place>100) player2place = 100 -(player2place%100) 
+            if(board[player2place]) player2place = board[player2place]
+            console.log('Bot is on square '+ player2place);
+        };
+        element2 = document.getElementById(`${img[player2place]}`) || null;
+        img_in_element2 = document.createElement("img");   // creating the img element
+        img_in_element2.id = `img${img[player2place]}`;    // assigning id to it
+        img_in_element2.src = blue_circle;
+        element2.appendChild(img_in_element2);  // appending the img to the parent div
+    };
+    if(turn==2){
+        document.getElementById("turn").textContent= 'Bot'  
+    }else{
+        document.getElementById("turn").textContent= `Player ${turn}`;
+    }
+    if(turn==2) {
+        setTimeout(timeout_function, 2000);
+    };
+    if(turn==2) document.querySelector('#play').setAttribute('disabled',true)
+    if(turn==1) document.querySelector('#play').removeAttribute('disabled')
+};
 
 
-    function timeout_function(){
-        if(newGame_check){     // to check if the new game button was pressed during the bot turn
-            return 0;
-        }else if(play_hard_checkbox.checked){
-            hard();
-        }else if(two_dice_checkbox.checked){
+function play_now(){       // called when the play button is clicked on
+    newGame_check = 0;   // to reset the check button to start playing normally
+    const checkbox_div = document.getElementById('checkbox_div');
+    const two_dice_div = document.getElementById('two_dice_div');
+    const two_players_div = document.getElementById('two_players_div');
+    checkbox_div.style.visibility= 'hidden';      // hide the options so the user doesn't toggle them after the starting of the game
+    two_dice_div.style.visibility= 'hidden';      // although their parent div has hidden visibility, but if the hard mode was checked and unchecked they will have a style of visibility visible and they will appear
+    two_players_div.style.visibility= 'hidden';
+    if(play_hard_checkbox.checked){          // specifing which method should be called
+        hard();
+    }else if(two_dice_checkbox.checked){
+        if (two_players_checkbox.checked){
+            play();
+        }else{
             bot();
+        }
+    }else{
+        if (two_players_checkbox.checked){
+            playOne();
         }else{
             botOne();
         }
     };
-    
-    function hide_other_options(){    // function to hide other checkboxes if the hard mode is checked and to make them visible again if the user uncheked it
-        const two_dice_div = document.getElementById('two_dice_div');
-        const two_players_div = document.getElementById('two_players_div');
-        if(play_hard_checkbox.checked){
-            two_dice_div.style.visibility= 'hidden';
-            two_players_div.style.visibility= 'hidden';
-        }else{
-            two_dice_div.style.visibility= 'visible';
-            two_players_div.style.visibility= 'visible';
-        }
+};
+
+
+function timeout_function(){
+    if(newGame_check){     // to check if the new game button was pressed during the bot turn
+        return 0;
+    }else if(play_hard_checkbox.checked){
+        hard();
+    }else if(two_dice_checkbox.checked){
+        bot();
+    }else{
+        botOne();
     }
+};
+    
+function hide_other_options(){    // function to hide other checkboxes if the hard mode is checked and to make them visible again if the user uncheked it
+    const two_dice_div = document.getElementById('two_dice_div');
+    const two_players_div = document.getElementById('two_players_div');
+    if(play_hard_checkbox.checked){
+        two_dice_div.style.visibility= 'hidden';
+        two_players_div.style.visibility= 'hidden';
+    }else{
+        two_dice_div.style.visibility= 'visible';
+        two_players_div.style.visibility= 'visible';
+    }
+}
 
-    new_game.addEventListener('click', newGame);
+new_game.addEventListener('click', newGame);
 
-    play_hard_checkbox.addEventListener('change',hide_other_options);
+play_hard_checkbox.addEventListener('change',hide_other_options);
 
-    document.querySelector('#play').addEventListener('click', play_now);
+document.querySelector('#play').addEventListener('click', play_now);
     
     
